@@ -1,0 +1,8 @@
+name    'nine-git'
+version '0.0.1'
+source 'git@github.com:jiuka/puppet-git.git'
+author 'nine'
+license 'Apache License, Version 2.0'
+summary 'Puppet module to manage and configure git repositories'
+description 'Create and clone repositories and change config options.'
+project_page 'http://github.com/jiuka/puppet-git'
