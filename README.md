@@ -1,28 +1,30 @@
 Puppet module for GIT
-============================
+=====================
 
-This module allow you to manage and configure git repositories.
+This module allows you to manage and configure git repositories.
 
 Basic usage
 -----------
 
-Create new repo
+Create a new repo
+```puppet
+git { '/var/git/puppet.git':
+  bare => true;
+}
+```
 
-    git { '/var/git/puppet.git':
-        bare => true;
-    }
-
-Clone a remot repositorie
-
-    git { 'git://github.com/nine/puppet-git':
-        ensure => present,
-        path   =>/var/git/puppet-git';
-    }
+Clone a remote repository
+```puppet
+git { 'git://github.com/nine/puppet-git':
+  ensure => present,
+  path   => '/var/git/puppet-git';
+}
+```
 
 Dependencies
 ------------
 
-Depend on the availabilitie of the git binary.
+Depends on the availability of the git binary.
 
 Notes
 -----
