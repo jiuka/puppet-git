@@ -28,7 +28,7 @@ Puppet::Type.type(:git).provide :git do
     if source
       git(:clone, source, path, *opt)
     else
-      git(:init, path, *bare)
+      git(:init, path, *opt)
     end
   end
 

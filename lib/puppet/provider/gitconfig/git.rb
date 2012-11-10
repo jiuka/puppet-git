@@ -10,16 +10,21 @@ Puppet::Type.type(:gitconfig).provide :git do
   def self.prefetch(resources = nil)
     cache = {}
     resources.each do |name, resource|
-      if repo = @resource[:repo]
-        repo = :global
+      repo = resource[:repo]
+      unless repo
+        repo = :system
       end
       if cache.include?(repo)
         resource.provider.update(cache[repo])
         next
       end
 
-      if repo == :global
-        out = git(:config, "--global", "--list")
+      if repo == :system
+        begin
+          out = git(:config, "--system", "--list")
+        rescue Puppet::ExecutionFailure
+          out = ""
+        end
       else
         ENV['GIT_DIR'] = repo
         out = git(:config, "--local", "--list")
@@ -34,7 +39,6 @@ Puppet::Type.type(:gitconfig).provide :git do
         end
         cache[repo][k] << v
       end
-      self.info "Cache: #{cache[repo].inspect}"
       resource.provider.update(cache[repo])
     end
   end
@@ -44,7 +48,10 @@ Puppet::Type.type(:gitconfig).provide :git do
       ENV['GIT_DIR'] = @resource[:repo]
       git(:config, "--local", @resource[:key], @resource[:value])
     else
-      git(:config, "--global", @resource[:key], @resource[:value])
+      unless Puppet.features.root?
+        warnonce "Cannot manage system git config unless running as root"
+      end
+      git(:config, "--system", @resource[:key], @resource[:value])
     end
   end
 
@@ -53,7 +60,10 @@ Puppet::Type.type(:gitconfig).provide :git do
       ENV['GIT_DIR'] = @resource[:repo]
       git(:config, "--local", "--add", @resource[:key], @resource[:value])
     else
-      git(:config, "--global", "--add", @resource[:key], @resource[:value])
+      unless Puppet.features.root?                  
+        warnonce "Cannot manage system git config unless running as root"
+      end
+      git(:config, "--system", "--add", @resource[:key], @resource[:value])
     end
   end
 
@@ -63,13 +73,19 @@ Puppet::Type.type(:gitconfig).provide :git do
       if @resource[:value]
         git(:config, "--local", "--unset", @resource[:key], @resource[:value])
       else
+        unless Puppet.features.root?                  
+          warnonce "Cannot manage system git config unless running as root"
+        end
         git(:config, "--local", "--unset-all", @resource[:key])
       end
     else
       if @resource[:value]
-        git(:config, "--global", "--unset", @resource[:key], @resource[:value])
+        git(:config, "--system", "--unset", @resource[:key], @resource[:value])
       else
-        git(:config, "--global", "--unset-all", @resource[:key])
+        unless Puppet.features.root?                  
+          warnonce "Cannot manage system git config unless running as root"
+        end
+        git(:config, "--system", "--unset-all", @resource[:key])
       end
     end
   end
