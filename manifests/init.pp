@@ -18,14 +18,14 @@
 #
 # Copyright 2012 Nine Internet Solutions AG
 #
-
+#
 class git {
 
-  $pkg = $::operatingystem ? {
-    /(?i:Debian|Ubuntu)/ => ['git-core'],
-    default => ['git'],
-  }
+    $pkg = $::operatingystem ? {
+        /(?i:Debian|Ubuntu)/ => ['git-core'],
+        default => ['git'],
+    }
 
-  package { $pkg: ensure => installed }
+    package { $pkg: ensure => installed }
 
 }
