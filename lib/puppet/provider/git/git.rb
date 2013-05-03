@@ -21,7 +21,7 @@ Puppet::Type.type(:git).provide :git do
 
   def clone
     opt = []
-    if @resource[:bare] == :bare
+    if @resource[:bare] == :true
       opt << "--bare"
     end
 
